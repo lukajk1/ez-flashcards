@@ -33,11 +33,12 @@ def key_to_value_quiz(flashcards):
                 print("Correct!")
                 score += 1
             else:
-                print(f"Wrong! The correct answer was: {correct_answer}")
+                print(f"Incorrect! The answer was: {correct_answer}")
         except ValueError:
-            print(f"Invalid input! The correct answer was: {correct_answer}")
+            print(f"Invalid input - the correct answer was: {correct_answer}")
 
     print(f"\nQuiz complete! Your score: {score}/{len(questions)}")
+    main_prompt(flashcards)
 
 def value_to_key_quiz(flashcards):
     reversed_flashcards = {v: k for k, v in flashcards.items()}
@@ -62,26 +63,69 @@ def value_to_key_quiz(flashcards):
                 print("Correct!")
                 score += 1
             else:
-                print(f"Wrong! The correct answer was: {correct_answer}")
+                print(f"Incorrect! The answer was: {correct_answer}")
         except ValueError:
-            print(f"Invalid input! The correct answer was: {correct_answer}")
+            print(f"Invalid input - the answer was: {correct_answer}")
 
     print(f"\nQuiz complete! Your score: {score}/{len(questions)}")
+    main_prompt(flashcards)
 
+def front_to_back(flashcards):
+    questions = list(flashcards.keys())
+    random.shuffle(questions)
+
+    for question in questions:
+        print(f"\nFront: {question}")
+        input("Press any key to reveal the back...")
+        print(f"Back: {flashcards[question]}")
+
+    print("\nFlashcard review complete!")
+    main_prompt(flashcards)
+
+def back_to_front(flashcards):
+    reversed_flashcards = {v: k for k, v in flashcards.items()}
+    questions = list(reversed_flashcards.keys())
+    random.shuffle(questions)
+
+    for question in questions:
+        print(f"\nBack: {question}")
+        input("Press any key to reveal the front...")
+        print(f"Front: {reversed_flashcards[question]}")
+
+    print("\nFlashcard review complete!")
+    main_prompt(flashcards)
+
+def main_prompt(flashcards):
+    print("Choose mode:")
+    print("1. classic flashcard")
+    print("2. reverse classic flashcard")
+    print("3. quiz")
+    print("4. reverse quiz")
+    print()
+    
+    response = input("Enter 1, 2, 3, or 4: ").strip()
+
+    match response:
+        case "1":
+            front_to_back(flashcards)
+        case "2":
+            back_to_front(flashcards)
+        case "3":
+            key_to_value_quiz(flashcards)
+        case "4":
+            value_to_key_quiz(flashcards)
+        case _:
+            print("Invalid input!")
+            main_prompt(flashcards)
+            
 def main():
-    flashcards = load_flashcards("flashcards.json")
+    try:
+        flashcards = load_flashcards("flashcards.json")
+        main_prompt(flashcards)
+    except FileNotFoundError:
+        print("Error: 'flashcards.json' file not found. Please ensure the file exists in the current directory.")
 
-    print("Choose quiz mode:")
-    print("1. Match question to answer (default mode)")
-    print("2. Match answer to question (reverse mode)")
-    
-    mode = input("Enter 1 or 2: ").strip()
-    
-    if mode == "2":
-        value_to_key_quiz(flashcards)
-    else:
-        key_to_value_quiz(flashcards)
-
-# Run the main program
 if __name__ == "__main__":
+    print("ez-flashcards :D v1.1r")
+    print()
     main()
